@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from .models import UserProfile
 from .utils import throw_unauthenticated
@@ -55,3 +56,13 @@ def set_shipping_address(request):
     return Response({
         "message": "success",
     })
+
+def demo_login(request):
+    return render(request, "core/demo.html")
+
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+
+class GoogleLogin(SocialLoginView): # if you want to use Implicit Grant, use this
+    adapter_class = GoogleOAuth2Adapter

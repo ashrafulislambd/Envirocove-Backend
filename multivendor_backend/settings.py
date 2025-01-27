@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-y019r9e$ndf+bg$8)tk6vynj^s6y5gqc1x9g2n&53v=2)%!7)1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.232.148.174']
+ALLOWED_HOSTS = ['13.232.148.174', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -44,6 +44,16 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
 
+    'allauth',
+    'allauth.account',
+
+    # Optional -- requires install using `django-allauth[socialaccount]`.
+    'allauth.socialaccount',
+    # ... include the providers you want to enable:
+    'allauth.socialaccount.providers.google',
+
+    'dj_rest_auth',
+
     'core',
     'product',
 ]
@@ -57,6 +67,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 REST_FRAMEWORK = {
@@ -64,6 +76,30 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ]
+}
+
+DRF_REGISTRATION = {
+    'GOOGLE_LOGIN_ENABLED': True,
+}
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': '247795788757-2unbftddgghvrdg3nfju39cja7p0pd9j.apps.googleusercontent.com',
+            'secret': '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',
+        }
+    }
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -81,6 +117,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'django.template.context_processors.request',
             ],
         },
     },

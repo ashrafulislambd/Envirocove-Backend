@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign-In Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h1>Google Sign-In Demo</h1>
+    <button id="google-signin-button">Sign in with Google</button>
+
+    <p id="token-result"></p>
+
+    <script>
+        // Ensure the library is loaded before using 'google'
+        window.onload = function() {
+            const client = google.accounts.oauth2.initTokenClient({
+                client_id: '247795788757-2unbftddgghvrdg3nfju39cja7p0pd9j.apps.googleusercontent.com',  // Replace with your Google Client ID
+                scope: 'openid',
+                callback: (response) => {
+                    console.log("Hello");
+                    console.log('Access Token:', response.access_token);
+                    document.getElementById('token-result').innerText = 'Access Token: ' + response.access_token;
+                },
+            });
+
+            document.getElementById('google-signin-button').onclick = () => {
+                console.log('Requesting access token...');
+                client.requestAccessToken();
+                console.log('Access token request made.');
+            };
+        };
+    </script>
+</body>
+</html>
