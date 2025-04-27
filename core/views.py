@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import HttpResponse
 
-from .models import UserProfile
+from .models import UserProfile, Store
 from .utils import throw_unauthenticated
 from .constants import USER_TYPES
 
@@ -15,6 +15,54 @@ def profile(request):
     return Response({
         "type": profile.type, 
         "address": profile.shipping_address,
+    })
+
+@api_view()
+def store_info(request):
+    res = throw_unauthenticated(request)
+    if res: return res
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.type != "vendor":
+        return Response({
+            "error": "You must be a vendor",
+        })
+    try:
+        store = Store.objects.get(vendor=request.user)
+    except Store.DoesNotExist:
+        return Response({
+            "error": "Store info hasn't been created yet",
+        })
+    return Response({
+        "name": store.name,
+        "phone": store.phone,
+        "address": store.address,
+        "category": store.categroy,
+    })
+
+@api_view(http_method_names=['PATCH'])
+def set_store_info(request):
+    res = throw_unauthenticated(request)
+    if res: return res
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.type != "vendor":
+        return Response({
+            "error": "You must be a vendor",
+        })
+    try:
+        store = Store.objects.get(vendor=request.user)
+    except Store.DoesNotExist:
+        store = Store(vendor=request.user)
+    if "name" in request.data:
+        store.name = request.data["name"]
+    if "phone" in request.data:
+        store.phone = request.data["phone"]
+    if "address" in request.data:
+        store.address = request.data["address"]
+    if "category" in request.data:
+        store.categroy = request.data["category"]
+    store.save()
+    return Response({
+        "message": "success"
     })
 
 @api_view(http_method_names=['PUT'])

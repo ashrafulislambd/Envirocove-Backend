@@ -12,6 +12,13 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+    
+class Store(models.Model):
+    vendor = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=250)
+    phone = models.CharField(max_length=12)
+    address = models.CharField(max_length=200)
+    categroy = models.CharField(max_length=100)
 
 @receiver(post_save, sender=User)
 def post_user_save(sender, instance, **kwargs):
